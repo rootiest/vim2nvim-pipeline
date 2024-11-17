@@ -1,6 +1,11 @@
 # Vim2Nvim Pipeline
 
+![Vim2Nvim Pipeline Logo](.images/Vim2nvim.png)
+
 This vim plugin allows you to build and install neovim from source.
+
+It is meant to make it easier to install Neovim
+on a system that already has Vim installed.
 
 ## WARNING
 
