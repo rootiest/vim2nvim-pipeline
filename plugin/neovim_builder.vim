@@ -1,13 +1,14 @@
-" Neovim Builder Plugin
+
+" Neovim Builder Plugin for Vim
 function! NeovimBuild()
-  " Open a vertical split
-  vnew
+  " Set the directory where Neovim will be built
+  let l:build_dir = expand('~/neovim-build')
+  call mkdir(l:build_dir, 'p')
 
-  " Set the split to terminal mode
-  call termopen("sh", {'on_exit': 'NeovimBuildExit'})
-
-  " Write the commands to a temporary script
-  call setline(1, [
+  " Write the commands to a script file
+  let l:script_path = l:build_dir . '/build_neovim.sh'
+  call writefile([
+        \ '#!/bin/sh',
         \ 'echo "Cloning Neovim repository..."',
         \ 'git clone https://github.com/neovim/neovim.git',
         \ 'cd neovim',
@@ -15,23 +16,17 @@ function! NeovimBuild()
         \ 'make CMAKE_BUILD_TYPE=RelWithDebInfo',
         \ 'echo "Installing Neovim (requires sudo)..."',
         \ 'sudo make install',
-        \ 'echo "Neovim installation complete!"',
-        \ 'exit'
-        \ ])
-  normal G
-endfunction
+        \ 'echo "Neovim installation complete!"'
+        \ ], l:script_path)
 
-function! NeovimBuildExit(job_id, exit_code, event_type)
-  if a:exit_code != 0
-    echohl ErrorMsg
-    echom "Build failed! Check the output for details."
-    echohl None
-  else
-    echohl InfoMsg
-    echom "Build completed successfully!"
-    echohl None
-  endif
+  " Make the script executable
+  call system('chmod +x ' . l:script_path)
+
+  " Open the script in an external terminal
+  let l:term_cmd = 'x-terminal-emulator -e sh ' . shellescape(l:script_path)
+  silent! execute '!'.l:term_cmd
 endfunction
 
 command! NeovimBuild call NeovimBuild()
+
 
