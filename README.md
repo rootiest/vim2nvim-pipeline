@@ -37,8 +37,9 @@ Run `:NeovimBuild` to build and install neovim from source.
 
 ## See Also
 
-- [Neovim Updater plugin](https://github.com/rootiest/nvim-updater.nvim)
+- [Neovim Updater Plugin](https://github.com/rootiest/nvim-updater.nvim)
 
 ## License
 
-[MIT](./LICENCE)
+This repository is licensed under the [MIT License](LICENSE).  
+You are free to use, modify, and distribute this project in your own work.
