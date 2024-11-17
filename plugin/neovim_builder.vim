@@ -1,32 +1,36 @@
 
+
 " Neovim Builder Plugin for Vim
 function! NeovimBuild()
-  " Set the directory where Neovim will be built
+  " Set the build directory
   let l:build_dir = expand('~/neovim-build')
-  call mkdir(l:build_dir, 'p')
 
-  " Write the commands to a script file
-  let l:script_path = l:build_dir . '/build_neovim.sh'
-  call writefile([
-        \ '#!/bin/sh',
-        \ 'echo "Cloning Neovim repository..."',
-        \ 'git clone https://github.com/neovim/neovim.git',
-        \ 'cd neovim',
-        \ 'echo "Building Neovim..."',
-        \ 'make CMAKE_BUILD_TYPE=RelWithDebInfo',
-        \ 'echo "Installing Neovim (requires sudo)..."',
-        \ 'sudo make install',
-        \ 'echo "Neovim installation complete!"'
-        \ ], l:script_path)
+  " Create the directory if it doesn't exist
+  if !isdirectory(l:build_dir)
+    call mkdir(l:build_dir, 'p')
+  endif
 
-  " Make the script executable
-  call system('chmod +x ' . l:script_path)
+  " Navigate to the build directory
+  execute 'cd ' . l:build_dir
 
-  " Open the script in an external terminal
-  let l:term_cmd = 'x-terminal-emulator -e sh ' . shellescape(l:script_path)
-  silent! execute '!'.l:term_cmd
+  " Run the commands to clone, build, and install Neovim
+  echo "Cloning Neovim repository..."
+  execute '!git clone https://github.com/neovim/neovim.git'
+
+  if isdirectory(l:build_dir . '/neovim')
+    echo "Building Neovim..."
+    execute '!cd neovim && make CMAKE_BUILD_TYPE=RelWithDebInfo'
+
+    echo "Installing Neovim (requires sudo)..."
+    execute '!cd neovim && sudo make install'
+
+    echo "Neovim installation complete!"
+  else
+    echo "Failed to clone the Neovim repository."
+  endif
 endfunction
 
 command! NeovimBuild call NeovimBuild()
+
 
 
